@@ -2,14 +2,19 @@
   "name": "gitinfo",
   "version": "1.0.0",
   "description": "",
-  "main": "bin/index.js",
+  "main": "dist/index.js",
   "bin": {
-    "git-info": "bin/index.js"
+    "git-info": "dist/index.js"
   },
   "scripts": {
-    "dev": "node bin/index.js",
+    "build": "tsc --build",
+    "watch": "tsc --watch",
+    "dev": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.0.2"
+  }
 }

@@ -2,7 +2,12 @@
   "name": "gitinfo",
   "version": "1.0.0",
   "description": "",
+  "main": "bin/index.js",
+  "bin": {
+    "git-info": "bin/index.js"
+  },
   "scripts": {
+    "dev": "node bin/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

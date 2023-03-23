@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "type": "module",
   "bin": {
     "git-info": "dist/index.js"
   },
@@ -15,6 +16,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^18.15.5",
     "typescript": "^5.0.2"
+  },
+  "map": {
+    "child_process": "@node/child_process"
   }
 }

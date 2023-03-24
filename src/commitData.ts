@@ -1,6 +1,4 @@
 import { execSync } from 'node:child_process';
-import {rawCommitDataType} from './types'
-
 
 let getRawCommitData = async(targetRepo: string) => {
   return execSync(`cd ${targetRepo} && git log --all --name-only --date=unix --pretty=format:"!!%n!%n%h%n!%n%an%n!%n%s%n!%n%ad%n!%n%p%n!%n%d%n!"`, { encoding: 'utf-8' })
@@ -28,16 +26,14 @@ let getformattedRawCommitData = async(rawData: string) => {
   return rawData.split("!!").slice(1).map( commit => formatCommit(commit))
 }
 
-let getIdexCommitDataByHash = async(formattedRawCommitData: rawCommitDataType) => {
+let getIdexCommitDataByHash = async(formattedRawCommitData: Awaited<ReturnType<typeof getformattedRawCommitData>>) => {
   let commitDataObject = {}
   formattedRawCommitData.forEach( commit => {
-    let commitHash = commit?.commitHash ?? ""
-    delete commit.commitHash
     // Add commit data to object with commit hash as key
+    let {commitHash, ...truncatedCommit} = commit
     // @ts-expect-error
-    commitDataObject[commitHash] = commit
-  }
-  )
+    commitDataObject[commitHash] = truncatedCommit
+  })
   return commitDataObject
 }
 

@@ -24,5 +24,8 @@
   },
   "map": {
     "child_process": "@node/child_process"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3"
   }
 }

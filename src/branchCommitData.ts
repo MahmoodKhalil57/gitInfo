@@ -1,7 +1,10 @@
 import type { getCommitData } from './commitData';
 import type { getBranchData } from './branchData';
 
-let getRawBranchCommitsArray = async(commitDataObject: Awaited<ReturnType<typeof getCommitData>>, branchDataArray: Awaited<ReturnType<typeof getBranchData>>) => {
+let getRawBranchCommitsArray = async(commitDataObject: Awaited<ReturnType<typeof getCommitData>>, branchDataArray: Awaited<ReturnType<typeof getBranchData>>, removeMergedTop: boolean) => {
+  let parentIndex = removeMergedTop ? 0 : 1
+
+
   return branchDataArray.map( branch => {
     let branchObject = {
       branchName: branch.branchName,
@@ -9,22 +12,16 @@ let getRawBranchCommitsArray = async(commitDataObject: Awaited<ReturnType<typeof
     }
 
     
-    let nextCommitHash = branch.commitHash
-    let nextCommit = !!commitDataObject[nextCommitHash]
+    let nextCommitHash = branch?.commitHash
 
-    while(nextCommit){
+    while(nextCommitHash){
       let commit = commitDataObject[nextCommitHash]
-      let originalParentHash = commit.parents[0]
 
-      if(originalParentHash){
-        // if not merge commit
-        if(commit.parents.length === 1){
-          branchObject.commitHashes.push(originalParentHash)
-        }
-        nextCommitHash = originalParentHash
-      } else {
-        nextCommit = false
+      if(!removeMergedTop || commit.parents.length === 1){
+        branchObject.commitHashes.push(nextCommitHash)
       }
+      
+      nextCommitHash = commit.parents[parentIndex] ?? commit.parents[0]
     }
 
 
@@ -32,12 +29,12 @@ let getRawBranchCommitsArray = async(commitDataObject: Awaited<ReturnType<typeof
   })
 }
 
-let formatBranchCommitsArray = async(branchCommitsArray: Awaited<ReturnType<typeof getRawBranchCommitsArray>>) => {
+let formatBranchCommitsArray = async(branchCommitsArray: Awaited<ReturnType<typeof getRawBranchCommitsArray>>, removeMergedBottom: boolean) => {
   // remove duplicate commit hashes
   let currCommitHashes: string[]
   let uniqueHashes: string[] = []
 
-  let result = branchCommitsArray.map( branch => {
+  let result = removeMergedBottom ?  branchCommitsArray.map( branch => {
     currCommitHashes = []
     branch.commitHashes.forEach( commitHash => {
       if(!uniqueHashes.includes(commitHash)){
@@ -47,16 +44,17 @@ let formatBranchCommitsArray = async(branchCommitsArray: Awaited<ReturnType<type
     })
     branch.commitHashes = currCommitHashes
     return branch
-  })
+  }):
+  branchCommitsArray
 
   return result
 }
 
-export let getBranchCommitsArray = async(commitDataObject: Awaited<ReturnType<typeof getCommitData>>, branchDataArray: Awaited<ReturnType<typeof getBranchData>>) => {
+export let getBranchCommitsArray = async(commitDataObject: Awaited<ReturnType<typeof getCommitData>>, branchDataArray: Awaited<ReturnType<typeof getBranchData>>, removeUnique: boolean) => {
 
-  let branchCommitsArray = await getRawBranchCommitsArray(commitDataObject, branchDataArray)
+  let branchCommitsArray = await getRawBranchCommitsArray(commitDataObject, branchDataArray, removeUnique)
 
-  let formattedBranchCommitsArray = await formatBranchCommitsArray(branchCommitsArray)
+  let formattedBranchCommitsArray = await formatBranchCommitsArray(branchCommitsArray, removeUnique)
 
-  return formattedBranchCommitsArray
+  return branchCommitsArray
 }

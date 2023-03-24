@@ -14,6 +14,7 @@ let OUTPUTDIRECTORY = ENV.OUTPUTDIRECTORY ?? "output"
 let OUTPUTFORMATTEDRAWCOMMIT = ENV.OUTPUTFORMATTEDRAWCOMMIT ?? "formattedRawDataCommit"
 let OUTPUTFORMATTEDRAWBRANCH = ENV.OUTPUTFORMATTEDRAWBRANCH ?? "formattedRawDataBranch"
 let OUTPUTFORMATTEDBRANCHCOMMITS = ENV.OUTPUTFORMATTEDBRANCHCOMMITS ?? "formattedBranchCommits"
+let REMOVEDUPLICATECOMMITS = ENV.REMOVEUNIQUE ?? 'true'
 
 
 let saveData = async(commitDataObject: Awaited<ReturnType<typeof getCommitData>>, branchDataArray: Awaited<ReturnType<typeof getBranchData>>, branchCommitsArray: Awaited<ReturnType<typeof getBranchCommitsArray>>, outputDir:string, outputDirFormattedRawCommit:string, outputDirFormattedRawBranch:string, outputDirFormattedBranchCommits:string) => {
@@ -29,13 +30,13 @@ let saveData = async(commitDataObject: Awaited<ReturnType<typeof getCommitData>>
   fs.writeFileSync(outDirBranchCommits, JSON.stringify(branchCommitsArray, null, 2))
 }
 
-let getSaveData = async(targetRepo:string , outputDir:string, outputDirFormattedRawCommit:string, outputDirFormattedRawBranch:string, outputDirFormattedBranchCommits:string) => {
+let getSaveData = async(targetRepo:string , outputDir:string, outputDirFormattedRawCommit:string, outputDirFormattedRawBranch:string, outputDirFormattedBranchCommits:string, removeDuplicateCommits:boolean) => {
   let resolvedTargetRepo = path.resolve(targetRepo)
 
   let commitDataObject = await getCommitData(resolvedTargetRepo)
   let branchDataArray = await getBranchData(resolvedTargetRepo)
 
-  let branchCommitsArray = await getBranchCommitsArray(commitDataObject, branchDataArray)
+  let branchCommitsArray = await getBranchCommitsArray(commitDataObject, branchDataArray, removeDuplicateCommits)
 
   await saveData(commitDataObject, branchDataArray, branchCommitsArray, outputDir, outputDirFormattedRawCommit, outputDirFormattedRawBranch, outputDirFormattedBranchCommits)
 }
@@ -46,7 +47,8 @@ let main = async() =>{
       OUTPUTDIRECTORY,
       OUTPUTFORMATTEDRAWCOMMIT,
       OUTPUTFORMATTEDRAWBRANCH,
-      OUTPUTFORMATTEDBRANCHCOMMITS
+      OUTPUTFORMATTEDBRANCHCOMMITS,
+      REMOVEDUPLICATECOMMITS  === 'true'
     )
 }
 

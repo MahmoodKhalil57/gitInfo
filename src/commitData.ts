@@ -27,11 +27,9 @@ let getformattedRawCommitData = async(rawData: string) => {
 }
 
 let getIdexCommitDataByHash = async(formattedRawCommitData: Awaited<ReturnType<typeof getformattedRawCommitData>>) => {
-  let commitDataObject = {}
+  const commitDataObject: {[key: string] : Omit<typeof formattedRawCommitData[number], "commitHash">} = {}
   formattedRawCommitData.forEach( commit => {
-    // Add commit data to object with commit hash as key
     let {commitHash, ...truncatedCommit} = commit
-    // @ts-expect-error
     commitDataObject[commitHash] = truncatedCommit
   })
   return commitDataObject

@@ -7,8 +7,9 @@
     "git-info": "dist/index.js"
   },
   "scripts": {
-    "build": "tsc --build tsconfig.json --outDir dist --module commonjs --target es2020",
-    "watch": "tsc --watch --outDir dist --module commonjs --target es2020",
+    "start": "tsc && node dist/index.js",
+    "build": "tsc",
+    "watch": "tsc --watch",
     "dev": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

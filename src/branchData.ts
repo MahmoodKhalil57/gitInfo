@@ -11,7 +11,7 @@ let getformattedRawBranchData = async(rawData: string) => {
     let branchArr = branch.split(" ")
     let branchObj = {
       branchName : branchArr[0],
-      commitHash: branchArr[1],
+      commitHash: branchArr[1].slice(0, 7),
       upstream: branchArr[2],
       upstreamTrack: branchArr[3],
       head: branchArr[4]

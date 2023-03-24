@@ -6,8 +6,10 @@ let getRawCommitData = async(targetRepo: string) => {
 
 let formatCommit = (commit: string) => {
   let commitArr = commit.split("!").slice(1)
+  let parents = commitArr[4].replace(/\n/g, "").split(" ")
+
   let files = commitArr[6].split("\n")
-  if(files.length) files = files.slice(1, -1)
+  files = files.slice(1, -1)
   files = files.length === 1 ? [] : files.splice(0, files.length - 1)
 
   let commitObj = {
@@ -15,8 +17,8 @@ let formatCommit = (commit: string) => {
     author: commitArr[1].replace(/\n/g, ""),
     subject: commitArr[2].replace(/\n/g, ""),
     date: commitArr[3].replace(/\n/g, ""),
-    parents: commitArr[4].replace(/\n/g, ""),
     branches: commitArr[5].replace(/\n/g, ""),
+    parents,
     files
   }
   return commitObj

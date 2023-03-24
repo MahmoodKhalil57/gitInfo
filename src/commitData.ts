@@ -25,8 +25,9 @@ let formatCommit = (commit: string) => {
 let getformattedRawCommitData = async(rawData: string) => {
   return rawData.split("!!").slice(1).map( commit => formatCommit(commit))
 }
+type getformattedRawCommitDataReturnType = Awaited<ReturnType<typeof getformattedRawCommitData>>
 
-let getIdexCommitDataByHash = async(formattedRawCommitData: Awaited<ReturnType<typeof getformattedRawCommitData>>) => {
+let getIdexCommitDataByHash = async(formattedRawCommitData: getformattedRawCommitDataReturnType) => {
   type commitDataObjectType = {[key: string] : Omit<typeof formattedRawCommitData[number], "commitHash">}
   
   const commitDataObject: commitDataObjectType = {}
